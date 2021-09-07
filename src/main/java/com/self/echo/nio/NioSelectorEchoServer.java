@@ -39,8 +39,14 @@ public class NioSelectorEchoServer {
                 }else if (selectedKey.isReadable()) {
                     System.out.println("isReadable");
                     final SocketChannel channel = (SocketChannel)selectedKey.channel();
-                    ByteBuffer buffer = ByteBuffer.allocate(10);
-                    final int read = channel.read(buffer);
+                    final int capacity = 10;
+                    ByteBuffer buffer = ByteBuffer.allocate(capacity);
+                    int read;
+                    do {
+                        read = channel.read(buffer);
+                    } while (read == capacity);
+
+                    channel.write(ByteBuffer.wrap("ready!\n".getBytes()));
                     System.out.println("readSize="+read);
                 }else if (selectedKey.isValid()) {
                     System.out.println("isValid");
